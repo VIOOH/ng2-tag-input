@@ -35,6 +35,14 @@ export class TagInputDropdown {
      * @type {TemplateRef}
      */
     @ContentChildren(TemplateRef) public templates: QueryList<TemplateRef<any>>;
+    
+    /**
+     * Keep dropdown menu visible after adding item
+     * @name visibleMenuAfterItemAdd
+     * @type {boolean}
+     * @author Alkesh Shah
+     */
+    @Input() public visibleMenuAfterItemAdd = false;
 
     /**
      * @name offset
@@ -227,9 +235,16 @@ export class TagInputDropdown {
 
         // add item
         this.tagInput.onAddingRequested(true, model);
-
-        // hide dropdown
-        this.dropdown.hide();
+        
+        //#1 - Alkesh Shah
+        if(this.visibleMenuAfterItemAdd) {
+            item.preventClose = true; 
+        }
+        else {
+            // hide dropdown
+            this.dropdown.hide();
+        }
+        //End 1
     }
 
     /**
