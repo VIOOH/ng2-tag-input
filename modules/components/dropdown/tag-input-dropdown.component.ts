@@ -35,7 +35,7 @@ export class TagInputDropdown {
      * @type {TemplateRef}
      */
     @ContentChildren(TemplateRef) public templates: QueryList<TemplateRef<any>>;
-    
+
     /**
      * Keep dropdown menu visible after adding item
      * @name visibleMenuAfterItemAdd
@@ -43,6 +43,14 @@ export class TagInputDropdown {
      * @author Alkesh Shah
      */
     @Input() public visibleMenuAfterItemAdd = false;
+
+    /**
+     * Keep search box text after adding item
+     * @name maintainSearchText
+     * @type {boolean}
+     * @author Alkesh Shah
+     */
+    @Input() public maintainSearchText = false;
 
     /**
      * @name offset
@@ -96,12 +104,12 @@ export class TagInputDropdown {
      * @name matchingFn
      */
     @Input() public matchingFn: (value: string, target: TagModel) => boolean =
-         (value: string, target: TagModel): boolean => {
-            const targetValue = target[this.displayBy].toString();
+    (value: string, target: TagModel): boolean => {
+        const targetValue = target[this.displayBy].toString();
 
-            return targetValue && targetValue
-                .toLowerCase()
-                .indexOf(value.toLowerCase()) >= 0;
+        return targetValue && targetValue
+            .toLowerCase()
+            .indexOf(value.toLowerCase()) >= 0;
     }
 
     /**
@@ -152,7 +160,7 @@ export class TagInputDropdown {
         });
     }
 
-    constructor(@Inject(forwardRef(() => TagInputComponent)) private tagInput: TagInputComponent) {}
+    constructor( @Inject(forwardRef(() => TagInputComponent)) private tagInput: TagInputComponent) { }
 
     public ngOnInit() {
         this.onItemClicked()
@@ -231,18 +239,27 @@ export class TagInputDropdown {
 
         const display = typeof item.value === 'string' ? item.value : item.value[this.displayBy];
         const value = typeof item.value === 'string' ? item.value : item.value[this.identifyBy];
-        const model = {...item.value, display, value};
+        const model = { ...item.value, display, value };
+        var curVal: string = "";
+        //#1 - Alkesh Shah
+        if (this.maintainSearchText) {
+            curVal = this.tagInput.formValue;// getControl().value;
+        }
+        //End 1
 
         // add item
         this.tagInput.onAddingRequested(true, model);
-        
+
         //#1 - Alkesh Shah
-        if(this.visibleMenuAfterItemAdd) {
-            item.preventClose = true; 
+        if (this.visibleMenuAfterItemAdd) {
+            item.preventClose = true;
         }
         else {
             // hide dropdown
             this.dropdown.hide();
+        }
+        if (curVal) {
+            this.tagInput.setInputValue(curVal);
         }
         //End 1
     }
@@ -358,7 +375,7 @@ export class TagInputDropdown {
                     // show the dropdown
                     .show();
 
-        }, () => this.setLoadingState(false));
+            }, () => this.setLoadingState(false));
     }
 
     /**

@@ -1183,6 +1183,7 @@ var TagInputDropdown = (function () {
         var _this = this;
         this.tagInput = tagInput;
         this.visibleMenuAfterItemAdd = false;
+        this.maintainSearchText = false;
         this.offset = '50 0';
         this.focusFirstElement = false;
         this.showDropdownIfEmpty = false;
@@ -1272,12 +1273,19 @@ var TagInputDropdown = (function () {
         var display = typeof item.value === 'string' ? item.value : item.value[this.displayBy];
         var value = typeof item.value === 'string' ? item.value : item.value[this.identifyBy];
         var model = __assign({}, item.value, { display: display, value: value });
+        var curVal = "";
+        if (this.maintainSearchText) {
+            curVal = this.tagInput.formValue;
+        }
         this.tagInput.onAddingRequested(true, model);
         if (this.visibleMenuAfterItemAdd) {
             item.preventClose = true;
         }
         else {
             this.dropdown.hide();
+        }
+        if (curVal) {
+            this.tagInput.setInputValue(curVal);
         }
     };
     TagInputDropdown.prototype.show = function () {
@@ -1368,6 +1376,10 @@ __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
     __metadata("design:type", Object)
 ], TagInputDropdown.prototype, "visibleMenuAfterItemAdd", void 0);
+__decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    __metadata("design:type", Object)
+], TagInputDropdown.prototype, "maintainSearchText", void 0);
 __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
     __metadata("design:type", Object)
