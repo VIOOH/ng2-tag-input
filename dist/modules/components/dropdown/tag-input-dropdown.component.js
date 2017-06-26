@@ -173,7 +173,13 @@ var TagInputDropdown = (function () {
                 var model = typeof tag.model === 'string' ? tag.model : tag.model[identifyBy];
                 return model === item[_this.identifyBy];
             });
-            return _this.matchingFn(value, item) && hasValue === false;
+            if (hasValue) {
+                item['isDisabled'] = true;
+            }
+            else {
+                item['isDisabled'] = false;
+            }
+            return _this.matchingFn(value, item);
         });
     };
     TagInputDropdown.prototype.setItems = function (items) {

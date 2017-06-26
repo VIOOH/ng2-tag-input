@@ -326,7 +326,15 @@ export class TagInputDropdown {
                 return model === item[this.identifyBy];
             });
 
-            return this.matchingFn(value, item) && hasValue === false;
+            //Yuvraj - Keep Selected item in DropDown list
+            if (hasValue) {
+                item['isDisabled'] = true;
+            } else {
+                item['isDisabled'] = false;
+            }
+            return this.matchingFn(value, item);
+            //return this.matchingFn(value, item) && hasValue === false;
+            //End - Yuvraj - Keep Selected item in DropDown list
         });
     }
 

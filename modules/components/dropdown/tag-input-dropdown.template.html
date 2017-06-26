@@ -1,18 +1,11 @@
 <ng2-dropdown>
-    <ng2-dropdown-menu [focusFirstElement]="focusFirstElement"
-                       [appendToBody]="appendToBody"
-                       [offset]="offset">
-        <ng2-menu-item *ngFor="let item of items; let index = index; let last = last"
-                       [value]="item"
-                       [ngSwitch]="!!templates.length">
-
-            <span *ngSwitchCase="false"
-                  [innerHTML]="item[displayBy] | highlight : tagInput.inputForm.value.value">
+    <ng2-dropdown-menu [focusFirstElement]="focusFirstElement" [appendToBody]="appendToBody" [offset]="offset">
+        <ng2-menu-item *ngFor="let item of items; let index = index; let last = last" [value]="item" [ngSwitch]="!!templates.length">
+            <!--Yuvraj - Keep Selected item in DropDown list-->
+            <span *ngSwitchCase="false" [ngClass]="{'disabled-menu-item': item.isDisabled}" [innerHTML]="item[displayBy] | highlight : tagInput.inputForm.value.value">
             </span>
 
-            <ng-template *ngSwitchDefault
-                      [ngTemplateOutlet]="templates.first"
-                      [ngOutletContext]="{ item: item, index: index, last: last }">
+            <ng-template *ngSwitchDefault [ngTemplateOutlet]="templates.first" [ngOutletContext]="{ item: item, index: index, last: last }">
             </ng-template>
         </ng2-menu-item>
     </ng2-dropdown-menu>
