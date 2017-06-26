@@ -88,12 +88,12 @@ export class TagInputDropdown {
      * @name matchingFn
      */
     @Input() public matchingFn: (value: string, target: TagModel) => boolean =
-         (value: string, target: TagModel): boolean => {
-            const targetValue = target[this.displayBy].toString();
+    (value: string, target: TagModel): boolean => {
+        const targetValue = target[this.displayBy].toString();
 
-            return targetValue && targetValue
-                .toLowerCase()
-                .indexOf(value.toLowerCase()) >= 0;
+        return targetValue && targetValue
+            .toLowerCase()
+            .indexOf(value.toLowerCase()) >= 0;
     }
 
     /**
@@ -144,7 +144,7 @@ export class TagInputDropdown {
         });
     }
 
-    constructor(@Inject(forwardRef(() => TagInputComponent)) private tagInput: TagInputComponent) {}
+    constructor( @Inject(forwardRef(() => TagInputComponent)) private tagInput: TagInputComponent) { }
 
     public ngOnInit() {
         this.onItemClicked()
@@ -223,7 +223,7 @@ export class TagInputDropdown {
 
         const display = typeof item.value === 'string' ? item.value : item.value[this.displayBy];
         const value = typeof item.value === 'string' ? item.value : item.value[this.identifyBy];
-        const model = {...item.value, display, value};
+        const model = { ...item.value, display, value };
 
         // add item
         this.tagInput.onAddingRequested(true, model);
@@ -294,7 +294,13 @@ export class TagInputDropdown {
                 return model === item[this.identifyBy];
             });
 
-            return this.matchingFn(value, item) && hasValue === false;
+            if (hasValue) {
+                item['isDisabled'] = true;
+            } else {
+                item['isDisabled'] = false;
+            }
+            //return this.matchingFn(value, item) && hasValue === false;
+            return this.matchingFn(value, item);
         });
     }
 
@@ -343,7 +349,7 @@ export class TagInputDropdown {
                     // show the dropdown
                     .show();
 
-        }, () => this.setLoadingState(false));
+            }, () => this.setLoadingState(false));
     }
 
     /**

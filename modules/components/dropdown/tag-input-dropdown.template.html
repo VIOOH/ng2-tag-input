@@ -7,7 +7,8 @@
                        [ngSwitch]="!!templates.length">
 
             <span *ngSwitchCase="false"
-                  [innerHTML]="item[displayBy] | highlight : tagInput.inputForm.value.value">
+                  [innerHTML]="item[displayBy] | highlight : tagInput.inputForm.value.value"
+                  [ngClass]="{'disabled-menu-item': item.isDisabled}">
             </span>
 
             <ng-template *ngSwitchDefault
