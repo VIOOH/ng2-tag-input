@@ -3,7 +3,7 @@
         <ng2-menu-item *ngFor="let item of items; let index = index; let last = last" [value]="item" [ngSwitch]="!!templates.length"
             [ngClass]="{'disabled-menu-item': item.isDisabled}">
             <!--Yuvraj - Keep Selected item in DropDown list-->
-            <span *ngSwitchCase="false" [ngStyle]="{'font-weight': item.isDisabled? '600':'500'}" [innerHTML]="item[displayBy] | highlight : tagInput.inputForm.value.value">
+            <span *ngSwitchCase="false" [innerHTML]="item[displayBy] | highlight : tagInput.inputForm.value.value">
             </span>
 
             <ng-template *ngSwitchDefault [ngTemplateOutlet]="templates.first" [ngOutletContext]="{ item: item, index: index, last: last }">
