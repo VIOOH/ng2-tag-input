@@ -39,6 +39,8 @@ $default-tag-theme: (
     background-hover: darken(map-get($color-primary, 'default'), 5%),
     background-editing: #fff,
 
+    border-editing: 1px solid #ccc,
+
     color: $tag-color,
     color-focused: #fff,
     color-active: #fff,
@@ -48,7 +50,7 @@ $default-tag-theme: (
 );
 
 $default-icon-theme: (
-    width: 16px,
+    width: 20px,
     height: 16px,
 
     transition: all 0.15s,

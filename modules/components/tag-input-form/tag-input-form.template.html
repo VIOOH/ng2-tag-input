@@ -5,7 +5,8 @@
            type="text"
            class="ng2-tag-input__text-input"
            autocomplete="off"
-           tabindex="0"
+           tabindex="{{ disabled ? -1 : tabindex ? tabindex : 0 }}"
+           minlength="1"
 
            [(ngModel)]="inputText"
            [formControlName]="'item'"
@@ -14,7 +15,7 @@
            [attr.placeholder]="placeholder"
            [attr.aria-label]="placeholder"
            [attr.tabindex]="tabindex"
-           [attr.disabled]="disabled"
+           [attr.disabled]="disabled ? disabled : null"
 
            (focus)="onFocus.emit($event)"
            (blur)="onBlur.emit($event)"
