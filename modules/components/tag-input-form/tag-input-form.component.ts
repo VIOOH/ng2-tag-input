@@ -1,20 +1,5 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-    Renderer2,
-    ViewChild
-} from '@angular/core';
-
-import {
-    FormGroup,
-    FormControl,
-    Validators,
-    ValidatorFn,
-    AbstractControl,
-    AsyncValidatorFn
-} from '@angular/forms';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 
 @Component({
     selector: 'tag-input-form',
@@ -97,12 +82,12 @@ export class TagInputForm {
      * @desc pass through the specified tabindex to the input
      * @type {string}
      */
-    @Input() public tabindex: string = undefined;
+    @Input() public tabindex: string = '';
 
     /**
      * @name disabled
      */
-    @Input() public disabled = false;
+    @Input() public disabled: boolean = false;
 
     /**
      * @name inputText
@@ -132,17 +117,12 @@ export class TagInputForm {
     /**
      * @name inputTextValue
      */
-    public inputTextValue = '';
-
-    constructor(private renderer: Renderer2) {}
+    public inputTextValue: string = '';
 
     public ngOnInit() {
         // creating form
         this.form = new FormGroup({
-            item: new FormControl('',
-                Validators.compose(this.validators),
-                Validators.composeAsync(this.asyncValidators)
-            )
+            item: new FormControl({value: '', disabled: this.disabled}, this.validators, this.asyncValidators)
         });
     }
 
@@ -150,7 +130,7 @@ export class TagInputForm {
      * @name value
      * @returns {AbstractControl}
      */
-    public get value(): AbstractControl {
+    public get value(): AbstractControl | null {
         return this.form.get('item');
     }
 
@@ -168,9 +148,11 @@ export class TagInputForm {
      * @returns {string[]}
      */
     public getErrorMessages(messages): string[] {
-        return Object.keys(messages)
-            .filter(err => this.value.hasError(err))
-            .map(err => messages[err]);
+        const value = this.value;
+
+        return value ? Object.keys(messages)
+            .filter(err => value.hasError(err))
+            .map(err => messages[err]) : [];
     }
 
     /**

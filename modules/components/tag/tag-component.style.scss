@@ -7,6 +7,10 @@
     z-index: 1;
 }
 
+:host {
+    max-width: 400px;
+}
+
 :host.blink {
     -webkit-animation: blink 0.3s normal forwards ease-in-out;
     animation: blink 0.3s normal forwards ease-in-out;
@@ -23,9 +27,15 @@
 
 :host [contenteditable='true'] {
     outline: 0;
-    user-select: none;
 }
 
-.inline {
-    display: inline;
+.tag-wrapper {
+    flex-direction: row;
+    display: flex;
+}
+
+.tag__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

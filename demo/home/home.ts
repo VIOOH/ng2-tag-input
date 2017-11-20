@@ -1,8 +1,8 @@
 import {Component} from '@angular/core';
 
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/filter';
@@ -13,13 +13,21 @@ import 'rxjs/add/operator/filter';
     templateUrl: './home.html'
 })
 export class Home {
-    constructor(private http: Http) {}
+    form: FormGroup;
+
+    constructor(private http: Http) {
+        this.form = new FormBuilder().group({
+            chips: [['chip'], []]
+        });
+    }
+
+    disabled = true;
 
     items = ['Javascript', 'Typescript'];
 
     inputText = 'text';
 
-    itemsAsObjects = [{id: 0, name: 'Angular', extra: 0}, {id: 1, name: 'React', extra: 1}];
+    itemsAsObjects = [{id: 0, name: 'Angular', readonly: true}, {id: 1, name: 'React'}];
 
     autocompleteItems = ['Item1', 'item2', 'item3'];
 
@@ -31,7 +39,7 @@ export class Home {
 
     dragAndDropExample = ['C#', 'Java'];
 
-    dragAndDropObjects = [{display:'Javascript', value: 'Javascript'}, {display:'Typescript', value: 'Typescript'}];
+    dragAndDropObjects = [{display: 'Javascript', value: 'Javascript'}, {display: 'Typescript', value: 'Typescript'}];
     dragAndDropStrings = ['CoffeScript', 'Scala.js'];
 
     public requestAutocompleteItems = (text: string): Observable<Response> => {
@@ -39,6 +47,12 @@ export class Home {
         return this.http
             .get(url)
             .map(data => data.json().items.map(item => item.full_name));
+    };
+
+    public requestAutocompleteItemsFake = (text: string): Observable<string[]> => {
+        return Observable.of([
+            'item1', 'item2', 'item3'
+        ]);
     };
 
     public options = {
@@ -71,15 +85,16 @@ export class Home {
     }
 
     public onTagEdited(item) {
-        console.log('input blurred: current value is ' + item);
+        console.log('tag edited: current value is ' + item);
     }
 
     public onValidationError(item) {
         console.log('invalid tag ' + item);
     }
 
-    public transform(item: string): string {
-        return `@${item}`;
+    public transform(value: string): Observable<object> {
+        const item = {display: `@${value}`, value: `@${value}`};
+        return Observable.of(item);
     }
 
     private startsWithAt(control: FormControl) {
@@ -102,7 +117,26 @@ export class Home {
         return null;
     }
 
+    private validateAsync(control: FormControl): Promise<any> {
+        return new Promise(resolve => {
+            const value = control.value;
+            const result: any = isNaN(value) ? {
+                isNan: true
+            } : null;
+  
+            setTimeout(() => {
+                resolve(result);
+            }, 1);
+        });
+    }
+
+    public asyncErrorMessages = {
+        isNan: 'Please only add numbers'
+    };
+
     public validators = [this.startsWithAt, this.endsWith$];
+
+    public asyncValidators = [this.validateAsync];
 
     public errorMessages = {
         'startsWithAt@': 'Your items need to start with \'@\'',
@@ -112,16 +146,21 @@ export class Home {
     public onAdding(tag): Observable<any> {
         const confirm = window.confirm('Do you really want to add this tag?');
         return Observable
-            .of(undefined)
-            .filter(() => confirm)
-            .mapTo(tag);
+            .of(tag)
+            .filter(() => confirm);
     }
 
     public onRemoving(tag): Observable<any> {
         const confirm = window.confirm('Do you really want to remove this tag?');
         return Observable
-            .of(undefined)
-            .filter(() => confirm)
-            .mapTo(tag);
+            .of(tag)
+            .filter(() => confirm);
+    }
+
+    public asyncOnAdding(tag): Observable<any> {
+        const confirm = window.confirm('Do you really want to add this tag?');
+        return Observable
+            .of(tag)
+            .filter(() => confirm);
     }
 }
