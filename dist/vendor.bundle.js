@@ -1,27 +1,35 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
+		module.exports = factory(require("rxjs"));
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
+		define(["rxjs"], factory);
 	else if(typeof exports === 'object')
-		exports["ng2-tag-input"] = factory();
+		exports["ngx-chips"] = factory(require("rxjs"));
 	else
-		root["ng2-tag-input"] = factory();
-})(this, function() {
-return webpackJsonpng2_tag_input([0],{
+		root["ngx-chips"] = factory(root["rxjs"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_25__) {
+return webpackJsonpngx_chips([0],{
 
-/***/ 75:
+/***/ 25:
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_25__;
+
+/***/ }),
+
+/***/ 81:
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(0);
-__webpack_require__(9);
-__webpack_require__(2);
+__webpack_require__(13);
+__webpack_require__(4);
 __webpack_require__(12);
-module.exports = __webpack_require__(4);
+__webpack_require__(25);
+module.exports = __webpack_require__(7);
 
 
 /***/ })
 
-},[75]);
+},[81]);
 });
 //# sourceMappingURL=vendor.map

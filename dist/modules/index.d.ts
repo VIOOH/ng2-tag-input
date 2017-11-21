@@ -1,4 +1,2 @@
-import { NgModule } from '@angular/core';
-@NgModule() export declare class TagInputModule {
-}
+export * from './tag-input.module';
 export * from './components';

@@ -8,14 +8,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Input } from '@angular/core';
+import { OptionsProvider } from './providers';
 export function isObject(obj) {
     return obj === Object(obj);
 }
 var TagInputAccessor = (function () {
     function TagInputAccessor() {
         this._items = [];
-        this.displayBy = 'display';
-        this.identifyBy = 'value';
+        this.displayBy = OptionsProvider.defaults.tagInput.displayBy;
+        this.identifyBy = OptionsProvider.defaults.tagInput.identifyBy;
     }
     Object.defineProperty(TagInputAccessor.prototype, "items", {
         get: function () {

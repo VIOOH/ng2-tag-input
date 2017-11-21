@@ -16,4 +16,6 @@ export declare const KEY_PRESS_ACTIONS: {
     39: string;
     9: string;
 };
-export declare const DRAG_AND_DROP_KEY = "dragged tag";
+export declare const DRAG_AND_DROP_KEY = "Text";
+export declare const NEXT = "NEXT";
+export declare const PREV = "PREV";

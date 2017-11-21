@@ -15,35 +15,92 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-import { Component, ViewChild, forwardRef, Inject, TemplateRef, ContentChildren, Input, QueryList, HostListener } from '@angular/core';
+import { Component, ContentChildren, forwardRef, HostListener, Injector, Input, QueryList, TemplateRef, ViewChild, } from '@angular/core';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
-import { TagInputComponent } from '../';
+import 'rxjs/add/operator/first';
+import 'rxjs/add/operator/debounceTime';
 import { Ng2Dropdown } from 'ng2-material-dropdown';
+import { OptionsProvider } from '../../core';
+import { TagInputComponent } from '../../components';
+var defaults = forwardRef(function () { return OptionsProvider.defaults.dropdown; });
 var TagInputDropdown = (function () {
-    function TagInputDropdown(tagInput) {
+    function TagInputDropdown(injector) {
         var _this = this;
-        this.tagInput = tagInput;
+        this.injector = injector;
         this.visibleMenuAfterItemAdd = false;
         this.maintainSearchText = false;
-        this.offset = '50 0';
-        this.focusFirstElement = false;
-        this.showDropdownIfEmpty = false;
-        this.minimumTextLength = 1;
-        this.displayBy = 'display';
-        this.identifyBy = 'value';
-        this.matchingFn = function (value, target) {
-            var targetValue = target[_this.displayBy].toString();
-            return targetValue && targetValue
-                .toLowerCase()
-                .indexOf(value.toLowerCase()) >= 0;
-        };
-        this.appendToBody = true;
+        this.offset = new defaults().offset;
+        this.focusFirstElement = new defaults().focusFirstElement;
+        this.showDropdownIfEmpty = new defaults().showDropdownIfEmpty;
+        this.minimumTextLength = new defaults().minimumTextLength;
+        this.limitItemsTo = new defaults().limitItemsTo;
+        this.displayBy = new defaults().displayBy;
+        this.identifyBy = new defaults().identifyBy;
+        this.matchingFn = new defaults().matchingFn;
+        this.appendToBody = new defaults().appendToBody;
+        this.keepOpen = new defaults().keepOpen;
         this.items = [];
+        this.tagInput = this.injector.get(TagInputComponent);
         this._autocompleteItems = [];
+        this.show = function () {
+            var value = _this.getFormValue();
+            var hasMinimumText = value.trim().length >= _this.minimumTextLength;
+            var position = _this.calculatePosition();
+            var items = _this.getMatchingItems(value);
+            var hasItems = items.length > 0;
+            var isHidden = _this.isVisible === false;
+            var showDropdownIfEmpty = _this.showDropdownIfEmpty && hasItems && !value;
+            var assertions = [];
+            var shouldShow = isHidden && ((hasItems && hasMinimumText) || showDropdownIfEmpty);
+            var shouldHide = _this.isVisible && !hasItems;
+            if (_this.autocompleteObservable && hasMinimumText) {
+                return _this.getItemsFromObservable(value);
+            }
+            var curVal = "";
+            if (_this.maintainSearchText) {
+                curVal = _this.tagInput.formValue;
+            }
+            if (!_this.showDropdownIfEmpty && !value) {
+                return _this.dropdown.hide();
+            }
+            _this.setItems(items);
+            if (_this.visibleMenuAfterItemAdd) {
+                shouldHide = false;
+            }
+            if (curVal) {
+                _this.tagInput.setInputValue(curVal);
+            }
+            if (shouldShow) {
+                _this.dropdown.show(position);
+            }
+            else if (shouldHide) {
+                _this.hide();
+            }
+        };
+        this.requestAdding = function (item) {
+            _this.tagInput.onAddingRequested(true, _this.createTagModel(item));
+        };
+        this.resetItems = function () {
+            _this.items = [];
+        };
+        this.getItemsFromObservable = function (text) {
+            _this.setLoadingState(true);
+            var subscribeFn = function (data) {
+                _this.setLoadingState(false)
+                    .populateItems(data);
+                _this.setItems(_this.getMatchingItems(text));
+                if (_this.items.length) {
+                    _this.dropdown.show(_this.calculatePosition());
+                }
+                else if (!_this.showDropdownIfEmpty && _this.isVisible) {
+                    _this.dropdown.hide();
+                }
+            };
+            _this.autocompleteObservable(text)
+                .first()
+                .subscribe(subscribeFn, function () { return _this.setLoadingState(false); });
+        };
     }
     Object.defineProperty(TagInputDropdown.prototype, "autocompleteItems", {
         get: function () {
@@ -67,22 +124,25 @@ var TagInputDropdown = (function () {
         configurable: true
     });
     TagInputDropdown.prototype.ngOnInit = function () {
-        var _this = this;
-        this.onItemClicked()
-            .subscribe(this.addNewItem.bind(this));
-        this.onHide()
-            .subscribe(this.resetItems.bind(this));
-        this.tagInput.inputForm.onKeyup
-            .subscribe(this.show.bind(this));
-        if (this.autocompleteObservable) {
-            this.tagInput
-                .onTextChange
-                .filter(function (text) { return text.trim().length >= _this.minimumTextLength; })
-                .subscribe(this.getItemsFromObservable.bind(this));
-        }
+        this.onItemClicked().subscribe(this.requestAdding);
+        this.onHide().subscribe(this.resetItems);
+        var DEBOUNCE_TIME = 200;
+        var KEEP_OPEN = this.keepOpen;
+        this.tagInput
+            .onTextChange
+            .asObservable()
+            .debounceTime(DEBOUNCE_TIME)
+            .filter(function (value) {
+            if (KEEP_OPEN === false) {
+                return value.length > 0;
+            }
+            return true;
+        })
+            .subscribe(this.show);
     };
     TagInputDropdown.prototype.updatePosition = function () {
-        this.dropdown.menu.updatePosition(this.tagInput.inputForm.getElementPosition());
+        var position = this.tagInput.inputForm.getElementPosition();
+        this.dropdown.menu.updatePosition(position);
     };
     Object.defineProperty(TagInputDropdown.prototype, "isVisible", {
         get: function () {
@@ -111,50 +171,9 @@ var TagInputDropdown = (function () {
         enumerable: true,
         configurable: true
     });
-    TagInputDropdown.prototype.addNewItem = function (item) {
-        if (!item) {
-            return;
-        }
-        var display = typeof item.value === 'string' ? item.value : item.value[this.displayBy];
-        var value = typeof item.value === 'string' ? item.value : item.value[this.identifyBy];
-        var model = __assign({}, item.value, { display: display, value: value });
-        var curVal = "";
-        if (this.maintainSearchText) {
-            curVal = this.tagInput.formValue;
-        }
-        this.tagInput.onAddingRequested(true, model);
-        if (this.visibleMenuAfterItemAdd) {
-            item.preventClose = true;
-        }
-        else {
-            this.dropdown.hide();
-        }
-        if (curVal) {
-            this.tagInput.setInputValue(curVal);
-        }
-    };
-    TagInputDropdown.prototype.show = function () {
-        var value = this.tagInput.inputForm.value.value.trim();
-        var position = this.tagInput.inputForm.getElementPosition();
-        var items = this.getMatchingItems(value);
-        var hasItems = items.length > 0;
-        var showDropdownIfEmpty = this.showDropdownIfEmpty && hasItems && !value;
-        var hasMinimumText = value.length >= this.minimumTextLength;
-        var assertions = [
-            hasItems,
-            this.isVisible === false,
-            hasMinimumText
-        ];
-        var showDropdown = (assertions.filter(function (item) { return item; }).length === assertions.length) ||
-            showDropdownIfEmpty;
-        var hideDropdown = this.isVisible && (!hasItems || !hasMinimumText);
-        this.setItems(items);
-        if (showDropdown && !this.isVisible) {
-            this.dropdown.show(position);
-        }
-        else if (hideDropdown) {
-            this.dropdown.hide();
-        }
+    TagInputDropdown.prototype.hide = function () {
+        this.resetItems();
+        this.dropdown.hide();
     };
     TagInputDropdown.prototype.scrollListener = function () {
         if (!this.isVisible) {
@@ -162,13 +181,29 @@ var TagInputDropdown = (function () {
         }
         this.updatePosition();
     };
+    TagInputDropdown.prototype.onWindowBlur = function () {
+        this.dropdown.hide();
+    };
+    TagInputDropdown.prototype.getFormValue = function () {
+        return this.tagInput.formValue.trim();
+    };
+    TagInputDropdown.prototype.calculatePosition = function () {
+        return this.tagInput.inputForm.getElementPosition();
+    };
+    TagInputDropdown.prototype.createTagModel = function (item) {
+        var display = typeof item.value === 'string' ? item.value : item.value[this.displayBy];
+        var value = typeof item.value === 'string' ? item.value : item.value[this.identifyBy];
+        return __assign({}, item.value, (_a = {}, _a[this.tagInput.displayBy] = display, _a[this.tagInput.identifyBy] = value, _a));
+        var _a;
+    };
     TagInputDropdown.prototype.getMatchingItems = function (value) {
         var _this = this;
         if (!value && !this.showDropdownIfEmpty) {
             return [];
         }
+        var dupesAllowed = this.tagInput.allowDupes;
         return this.autocompleteItems.filter(function (item) {
-            var hasValue = _this.tagInput.tags.some(function (tag) {
+            var hasValue = dupesAllowed ? true : _this.tagInput.tags.some(function (tag) {
                 var identifyBy = _this.tagInput.identifyBy;
                 var model = typeof tag.model === 'string' ? tag.model : tag.model[identifyBy];
                 return model === item[_this.identifyBy];
@@ -185,9 +220,6 @@ var TagInputDropdown = (function () {
     TagInputDropdown.prototype.setItems = function (items) {
         this.items = items.slice(0, this.limitItemsTo || items.length);
     };
-    TagInputDropdown.prototype.resetItems = function () {
-        this.items = [];
-    };
     TagInputDropdown.prototype.populateItems = function (data) {
         var _this = this;
         this.autocompleteItems = data.map(function (item) {
@@ -198,16 +230,6 @@ var TagInputDropdown = (function () {
             var _a;
         });
         return this;
-    };
-    TagInputDropdown.prototype.getItemsFromObservable = function (text) {
-        var _this = this;
-        this.setLoadingState(true);
-        this.autocompleteObservable(text)
-            .subscribe(function (data) {
-            _this.setLoadingState(false)
-                .populateItems(data)
-                .show();
-        }, function () { return _this.setLoadingState(false); });
     };
     TagInputDropdown.prototype.setLoadingState = function (state) {
         this.tagInput.isLoading = state;
@@ -233,7 +255,7 @@ __decorate([
 ], TagInputDropdown.prototype, "maintainSearchText", void 0);
 __decorate([
     Input(),
-    __metadata("design:type", Object)
+    __metadata("design:type", String)
 ], TagInputDropdown.prototype, "offset", void 0);
 __decorate([
     Input(),
@@ -273,6 +295,10 @@ __decorate([
 ], TagInputDropdown.prototype, "appendToBody", void 0);
 __decorate([
     Input(),
+    __metadata("design:type", Object)
+], TagInputDropdown.prototype, "keepOpen", void 0);
+__decorate([
+    Input(),
     __metadata("design:type", Array),
     __metadata("design:paramtypes", [Array])
 ], TagInputDropdown.prototype, "autocompleteItems", null);
@@ -282,13 +308,18 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], TagInputDropdown.prototype, "scrollListener", null);
+__decorate([
+    HostListener('window:blur'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], TagInputDropdown.prototype, "onWindowBlur", null);
 TagInputDropdown = __decorate([
     Component({
         selector: 'tag-input-dropdown',
         templateUrl: './tag-input-dropdown.template.html'
     }),
-    __param(0, Inject(forwardRef(function () { return TagInputComponent; }))),
-    __metadata("design:paramtypes", [TagInputComponent])
+    __metadata("design:paramtypes", [Injector])
 ], TagInputDropdown);
 export { TagInputDropdown };
 //# sourceMappingURL=tag-input-dropdown.component.js.map

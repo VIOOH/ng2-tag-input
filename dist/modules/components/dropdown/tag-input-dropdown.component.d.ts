@@ -1,12 +1,14 @@
-import { TemplateRef, QueryList, EventEmitter } from '@angular/core';
+import { EventEmitter, Injector, QueryList, TemplateRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
-import { TagInputComponent } from '../';
+import 'rxjs/add/operator/first';
+import 'rxjs/add/operator/debounceTime';
 import { Ng2Dropdown, Ng2MenuItem } from 'ng2-material-dropdown';
 import { TagModel } from '../../core';
+import { TagInputComponent } from '../../components';
 export declare class TagInputDropdown {
-    private tagInput;
+    private readonly injector;
     dropdown: Ng2Dropdown;
     templates: QueryList<TemplateRef<any>>;
     visibleMenuAfterItemAdd: boolean;
@@ -21,10 +23,12 @@ export declare class TagInputDropdown {
     identifyBy: string;
     matchingFn: (value: string, target: TagModel) => boolean;
     appendToBody: boolean;
+    keepOpen: boolean;
     items: TagModel[];
+    tagInput: TagInputComponent;
     private _autocompleteItems;
     autocompleteItems: TagModel[];
-    constructor(tagInput: TagInputComponent);
+    constructor(injector: Injector);
     ngOnInit(): void;
     updatePosition(): void;
     readonly isVisible: boolean;
@@ -32,13 +36,18 @@ export declare class TagInputDropdown {
     onItemClicked(): EventEmitter<string>;
     readonly selectedItem: Ng2MenuItem;
     readonly state: any;
-    private addNewItem(item);
-    show(): void;
+    show: () => void;
+    hide(): void;
     scrollListener(): void;
+    onWindowBlur(): void;
+    private getFormValue();
+    private calculatePosition();
+    private requestAdding;
+    private createTagModel(item);
     private getMatchingItems(value);
     private setItems(items);
-    private resetItems();
+    private resetItems;
     private populateItems(data);
-    private getItemsFromObservable(text);
+    private getItemsFromObservable;
     private setLoadingState(state);
 }

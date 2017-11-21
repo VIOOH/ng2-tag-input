@@ -7,11 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Input, Output, EventEmitter, Renderer2, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 var TagInputForm = (function () {
-    function TagInputForm(renderer) {
-        this.renderer = renderer;
+    function TagInputForm() {
         this.onSubmit = new EventEmitter();
         this.onBlur = new EventEmitter();
         this.onFocus = new EventEmitter();
@@ -19,7 +18,7 @@ var TagInputForm = (function () {
         this.onKeydown = new EventEmitter();
         this.validators = [];
         this.asyncValidators = [];
-        this.tabindex = undefined;
+        this.tabindex = '';
         this.disabled = false;
         this.inputTextChange = new EventEmitter();
         this.inputTextValue = '';
@@ -37,7 +36,7 @@ var TagInputForm = (function () {
     });
     TagInputForm.prototype.ngOnInit = function () {
         this.form = new FormGroup({
-            item: new FormControl('', Validators.compose(this.validators), Validators.composeAsync(this.asyncValidators))
+            item: new FormControl({ value: '', disabled: this.disabled }, this.validators, this.asyncValidators)
         });
     };
     Object.defineProperty(TagInputForm.prototype, "value", {
@@ -51,10 +50,10 @@ var TagInputForm = (function () {
         return document.activeElement === this.input.nativeElement;
     };
     TagInputForm.prototype.getErrorMessages = function (messages) {
-        var _this = this;
-        return Object.keys(messages)
-            .filter(function (err) { return _this.value.hasError(err); })
-            .map(function (err) { return messages[err]; });
+        var value = this.value;
+        return value ? Object.keys(messages)
+            .filter(function (err) { return value.hasError(err); })
+            .map(function (err) { return messages[err]; }) : [];
     };
     TagInputForm.prototype.hasErrors = function () {
         return this.form.dirty &&
@@ -133,7 +132,7 @@ __decorate([
 ], TagInputForm.prototype, "tabindex", void 0);
 __decorate([
     Input(),
-    __metadata("design:type", Object)
+    __metadata("design:type", Boolean)
 ], TagInputForm.prototype, "disabled", void 0);
 __decorate([
     ViewChild('input'),
@@ -148,8 +147,7 @@ TagInputForm = __decorate([
         selector: 'tag-input-form',
         styleUrls: ['./tag-input-form.style.scss'],
         templateUrl: './tag-input-form.template.html'
-    }),
-    __metadata("design:paramtypes", [Renderer2])
+    })
 ], TagInputForm);
 export { TagInputForm };
 //# sourceMappingURL=tag-input-form.component.js.map
