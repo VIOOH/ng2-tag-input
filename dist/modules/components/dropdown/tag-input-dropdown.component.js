@@ -29,7 +29,6 @@ var TagInputDropdown = (function () {
         var _this = this;
         this.injector = injector;
         this.visibleMenuAfterItemAdd = false;
-        this.maintainSearchText = false;
         this.offset = new defaults().offset;
         this.focusFirstElement = new defaults().focusFirstElement;
         this.showDropdownIfEmpty = new defaults().showDropdownIfEmpty;
@@ -57,20 +56,10 @@ var TagInputDropdown = (function () {
             if (_this.autocompleteObservable && hasMinimumText) {
                 return _this.getItemsFromObservable(value);
             }
-            var curVal = "";
-            if (_this.maintainSearchText) {
-                curVal = _this.tagInput.formValue;
-            }
             if (!_this.showDropdownIfEmpty && !value) {
                 return _this.dropdown.hide();
             }
             _this.setItems(items);
-            if (_this.visibleMenuAfterItemAdd) {
-                shouldHide = false;
-            }
-            if (curVal) {
-                _this.tagInput.setInputValue(curVal);
-            }
             if (shouldShow) {
                 _this.dropdown.show(position);
             }
@@ -249,10 +238,6 @@ __decorate([
     Input(),
     __metadata("design:type", Object)
 ], TagInputDropdown.prototype, "visibleMenuAfterItemAdd", void 0);
-__decorate([
-    Input(),
-    __metadata("design:type", Object)
-], TagInputDropdown.prototype, "maintainSearchText", void 0);
 __decorate([
     Input(),
     __metadata("design:type", String)

@@ -1,6 +1,6 @@
 <ng2-dropdown>
     <ng2-dropdown-menu [focusFirstElement]="focusFirstElement" [appendToBody]="appendToBody" [offset]="offset">
-        <ng2-menu-item *ngFor="let item of items; let index = index; let last = last" [value]="item" [ngSwitch]="!!templates.length"
+        <ng2-menu-item [preventClose]="visibleMenuAfterItemAdd" *ngFor="let item of items; let index = index; let last = last" [value]="item" [ngSwitch]="!!templates.length"
             [ngClass]="{'disabled-menu-item': item.isDisabled}">
             <!--Yuvraj - Keep Selected item in DropDown list-->
             <span *ngSwitchCase="false" [innerHTML]="item[displayBy] | highlight : tagInput.inputForm.value.value">

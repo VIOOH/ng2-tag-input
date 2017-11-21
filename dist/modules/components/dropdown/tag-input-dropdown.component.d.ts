@@ -12,7 +12,6 @@ export declare class TagInputDropdown {
     dropdown: Ng2Dropdown;
     templates: QueryList<TemplateRef<any>>;
     visibleMenuAfterItemAdd: boolean;
-    maintainSearchText: boolean;
     offset: string;
     focusFirstElement: boolean;
     showDropdownIfEmpty: boolean;

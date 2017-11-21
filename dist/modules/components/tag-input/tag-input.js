@@ -372,7 +372,6 @@ var TagInputComponent = (function (_super) {
         if (fromAutocomplete === void 0) { fromAutocomplete = false; }
         var model = this.getItemDisplay(item);
         var reset = function () {
-            _this.setInputValue('');
             _this.focus(true, false);
         };
         var validationFilter = function (tag) {

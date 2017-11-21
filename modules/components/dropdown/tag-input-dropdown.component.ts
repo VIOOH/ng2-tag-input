@@ -56,7 +56,7 @@ export class TagInputDropdown {
      * @type {boolean}
      * @author Alkesh Shah
      */
-    @Input() public maintainSearchText = false;
+    //@Input() public maintainSearchText = false;
 
     /**
      * @name offset
@@ -269,11 +269,11 @@ export class TagInputDropdown {
             return this.getItemsFromObservable(value);
         }
         
-        var curVal: string = "";
+        //var curVal: string = "";
         //#1 - Alkesh Shah
-        if (this.maintainSearchText) {
-            curVal = this.tagInput.formValue;// getControl().value;
-        }
+        //if (this.maintainSearchText) {
+        //    curVal = this.tagInput.formValue;// getControl().value;
+        //}
         //End 1
         if (!this.showDropdownIfEmpty && !value) {
             return this.dropdown.hide();
@@ -282,12 +282,12 @@ export class TagInputDropdown {
         this.setItems(items);
 
         //#1 - Alkesh Shah
-        if (this.visibleMenuAfterItemAdd) {
-            shouldHide = false;
-        }
-        if (curVal) {
-            this.tagInput.setInputValue(curVal);
-        }
+        //if (this.visibleMenuAfterItemAdd) {
+        //    shouldHide = false;
+        //}
+        //if (curVal) {
+        //    this.tagInput.setInputValue(curVal);
+        //}
         //End 1
         if (shouldShow) {
             this.dropdown.show(position);

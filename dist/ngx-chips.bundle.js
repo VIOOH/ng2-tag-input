@@ -1272,7 +1272,6 @@ var TagInputDropdown = (function () {
         var _this = this;
         this.injector = injector;
         this.visibleMenuAfterItemAdd = false;
-        this.maintainSearchText = false;
         this.offset = new defaults().offset;
         this.focusFirstElement = new defaults().focusFirstElement;
         this.showDropdownIfEmpty = new defaults().showDropdownIfEmpty;
@@ -1300,20 +1299,10 @@ var TagInputDropdown = (function () {
             if (_this.autocompleteObservable && hasMinimumText) {
                 return _this.getItemsFromObservable(value);
             }
-            var curVal = "";
-            if (_this.maintainSearchText) {
-                curVal = _this.tagInput.formValue;
-            }
             if (!_this.showDropdownIfEmpty && !value) {
                 return _this.dropdown.hide();
             }
             _this.setItems(items);
-            if (_this.visibleMenuAfterItemAdd) {
-                shouldHide = false;
-            }
-            if (curVal) {
-                _this.tagInput.setInputValue(curVal);
-            }
             if (shouldShow) {
                 _this.dropdown.show(position);
             }
@@ -1492,10 +1481,6 @@ __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
     __metadata("design:type", Object)
 ], TagInputDropdown.prototype, "visibleMenuAfterItemAdd", void 0);
-__decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
-    __metadata("design:type", Object)
-], TagInputDropdown.prototype, "maintainSearchText", void 0);
 __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
     __metadata("design:type", String)
@@ -2228,7 +2213,6 @@ var TagInputComponent = (function (_super) {
         if (fromAutocomplete === void 0) { fromAutocomplete = false; }
         var model = this.getItemDisplay(item);
         var reset = function () {
-            _this.setInputValue('');
             _this.focus(true, false);
         };
         var validationFilter = function (tag) {
@@ -3251,7 +3235,7 @@ exports.push([module.i, ":host,\n:host > div,\n:host > div:focus {\n  outline: 0
 /* 50 */
 /***/ (function(module, exports) {
 
-module.exports = "<ng2-dropdown>\r\n    <ng2-dropdown-menu [focusFirstElement]=\"focusFirstElement\" [appendToBody]=\"appendToBody\" [offset]=\"offset\">\r\n        <ng2-menu-item *ngFor=\"let item of items; let index = index; let last = last\" [value]=\"item\" [ngSwitch]=\"!!templates.length\"\r\n            [ngClass]=\"{'disabled-menu-item': item.isDisabled}\">\r\n            <!--Yuvraj - Keep Selected item in DropDown list-->\r\n            <span *ngSwitchCase=\"false\" [innerHTML]=\"item[displayBy] | highlight : tagInput.inputForm.value.value\">\r\n            </span>\r\n\r\n            <ng-template *ngSwitchDefault\r\n                      [ngTemplateOutlet]=\"templates.first\"\r\n                      [ngTemplateOutletContext]=\"{ item: item, index: index, last: last }\">\r\n            </ng-template>\r\n        </ng2-menu-item>\r\n    </ng2-dropdown-menu>\r\n</ng2-dropdown>";
+module.exports = "<ng2-dropdown>\r\n    <ng2-dropdown-menu [focusFirstElement]=\"focusFirstElement\" [appendToBody]=\"appendToBody\" [offset]=\"offset\">\r\n        <ng2-menu-item [preventClose]=\"visibleMenuAfterItemAdd\" *ngFor=\"let item of items; let index = index; let last = last\" [value]=\"item\" [ngSwitch]=\"!!templates.length\"\r\n            [ngClass]=\"{'disabled-menu-item': item.isDisabled}\">\r\n            <!--Yuvraj - Keep Selected item in DropDown list-->\r\n            <span *ngSwitchCase=\"false\" [innerHTML]=\"item[displayBy] | highlight : tagInput.inputForm.value.value\">\r\n            </span>\r\n\r\n            <ng-template *ngSwitchDefault\r\n                      [ngTemplateOutlet]=\"templates.first\"\r\n                      [ngTemplateOutletContext]=\"{ item: item, index: index, last: last }\">\r\n            </ng-template>\r\n        </ng2-menu-item>\r\n    </ng2-dropdown-menu>\r\n</ng2-dropdown>";
 
 /***/ }),
 /* 51 */

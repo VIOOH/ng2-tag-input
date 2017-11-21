@@ -897,7 +897,7 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
          */
         const reset = (): void => {
             // reset control and focus input
-            this.setInputValue('');
+            // this.setInputValue('');
 
             // focus input
             this.focus(true, false);
