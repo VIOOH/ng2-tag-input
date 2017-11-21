@@ -51,12 +51,12 @@ export class TagInputDropdown {
     @Input() public visibleMenuAfterItemAdd = false;
 
     /**
-     * Keep search box text after adding item
-     * @name maintainSearchText
+     * Show selected items as disabled in dropdown list
+     * @name disableSelectedItem
      * @type {boolean}
      * @author Alkesh Shah
      */
-    //@Input() public maintainSearchText = false;
+    @Input() public disableSelectedItem = true;
 
     /**
      * @name offset
@@ -171,7 +171,7 @@ export class TagInputDropdown {
         });
     }
 
-    constructor(private readonly injector: Injector) {}
+    constructor(private readonly injector: Injector) { }
 
     /**
      * @name ngOnInit
@@ -268,27 +268,13 @@ export class TagInputDropdown {
         if (this.autocompleteObservable && hasMinimumText) {
             return this.getItemsFromObservable(value);
         }
-        
-        //var curVal: string = "";
-        //#1 - Alkesh Shah
-        //if (this.maintainSearchText) {
-        //    curVal = this.tagInput.formValue;// getControl().value;
-        //}
-        //End 1
+
         if (!this.showDropdownIfEmpty && !value) {
             return this.dropdown.hide();
         }
 
         this.setItems(items);
 
-        //#1 - Alkesh Shah
-        //if (this.visibleMenuAfterItemAdd) {
-        //    shouldHide = false;
-        //}
-        //if (curVal) {
-        //    this.tagInput.setInputValue(curVal);
-        //}
-        //End 1
         if (shouldShow) {
             this.dropdown.show(position);
         } else if (shouldHide) {
@@ -382,15 +368,25 @@ export class TagInputDropdown {
                 return model === item[this.identifyBy];
             });
 
-            //Yuvraj - Keep Selected item in DropDown list
-            if (hasValue) {
-                item['isDisabled'] = true;
+            //Alkesh Shah - Keep Selected item in DropDown list and show as disabled
+            if (this.disableSelectedItem) {
+                const isSelected: boolean = this.tagInput.items.some(tag => {
+                    const identifyBy = this.tagInput.identifyBy;
+                    const model = tag[identifyBy];
+
+                    return model === item[this.identifyBy];
+                });
+
+                if (isSelected) {
+                    item['isDisabled'] = true;
+                } else {
+                    item['isDisabled'] = false;
+                }
+                return this.matchingFn(value, item);
             } else {
-                item['isDisabled'] = false;
+                return this.matchingFn(value, item) && hasValue === false;
             }
-            return this.matchingFn(value, item);
-            //return this.matchingFn(value, item) && hasValue === false;
-            //End - Yuvraj - Keep Selected item in DropDown list
+            //End - Alkesh Shah - Keep Selected item in DropDown list
         });
     }
 

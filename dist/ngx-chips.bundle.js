@@ -1272,6 +1272,7 @@ var TagInputDropdown = (function () {
         var _this = this;
         this.injector = injector;
         this.visibleMenuAfterItemAdd = false;
+        this.disableSelectedItem = true;
         this.offset = new defaults().offset;
         this.focusFirstElement = new defaults().focusFirstElement;
         this.showDropdownIfEmpty = new defaults().showDropdownIfEmpty;
@@ -1440,13 +1441,23 @@ var TagInputDropdown = (function () {
                 var model = typeof tag.model === 'string' ? tag.model : tag.model[identifyBy];
                 return model === item[_this.identifyBy];
             });
-            if (hasValue) {
-                item['isDisabled'] = true;
+            if (_this.disableSelectedItem) {
+                var isSelected = _this.tagInput.items.some(function (tag) {
+                    var identifyBy = _this.tagInput.identifyBy;
+                    var model = tag[identifyBy];
+                    return model === item[_this.identifyBy];
+                });
+                if (isSelected) {
+                    item['isDisabled'] = true;
+                }
+                else {
+                    item['isDisabled'] = false;
+                }
+                return _this.matchingFn(value, item);
             }
             else {
-                item['isDisabled'] = false;
+                return _this.matchingFn(value, item) && hasValue === false;
             }
-            return _this.matchingFn(value, item);
         });
     };
     TagInputDropdown.prototype.setItems = function (items) {
@@ -1481,6 +1492,10 @@ __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
     __metadata("design:type", Object)
 ], TagInputDropdown.prototype, "visibleMenuAfterItemAdd", void 0);
+__decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    __metadata("design:type", Object)
+], TagInputDropdown.prototype, "disableSelectedItem", void 0);
 __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
     __metadata("design:type", String)
