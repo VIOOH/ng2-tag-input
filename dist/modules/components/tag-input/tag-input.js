@@ -81,6 +81,7 @@ var TagInputComponent = (function (_super) {
         _this.onRemoving = new defaults().onRemoving;
         _this.onAdding = new defaults().onAdding;
         _this.animationDuration = new defaults().animationDuration;
+        _this.maintainSearchText = true;
         _this.onAdd = new EventEmitter();
         _this.onRemove = new EventEmitter();
         _this.onSelect = new EventEmitter();
@@ -372,6 +373,9 @@ var TagInputComponent = (function (_super) {
         if (fromAutocomplete === void 0) { fromAutocomplete = false; }
         var model = this.getItemDisplay(item);
         var reset = function () {
+            if (!_this.maintainSearchText) {
+                _this.setInputValue('');
+            }
             _this.focus(true, false);
         };
         var validationFilter = function (tag) {
@@ -603,6 +607,10 @@ __decorate([
     Input(),
     __metadata("design:type", Object)
 ], TagInputComponent.prototype, "animationDuration", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
+], TagInputComponent.prototype, "maintainSearchText", void 0);
 __decorate([
     Output(),
     __metadata("design:type", Object)

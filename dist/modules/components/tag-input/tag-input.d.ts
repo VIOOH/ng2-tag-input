@@ -49,6 +49,7 @@ export declare class TagInputComponent extends TagInputAccessor implements OnIni
         enter: string;
         leave: string;
     };
+    maintainSearchText: boolean;
     onAdd: EventEmitter<TagModel>;
     onRemove: EventEmitter<TagModel>;
     onSelect: EventEmitter<TagModel>;

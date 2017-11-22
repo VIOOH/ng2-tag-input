@@ -1937,6 +1937,7 @@ var TagInputComponent = (function (_super) {
         _this.onRemoving = new defaults().onRemoving;
         _this.onAdding = new defaults().onAdding;
         _this.animationDuration = new defaults().animationDuration;
+        _this.maintainSearchText = true;
         _this.onAdd = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
         _this.onRemove = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
         _this.onSelect = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
@@ -2228,6 +2229,9 @@ var TagInputComponent = (function (_super) {
         if (fromAutocomplete === void 0) { fromAutocomplete = false; }
         var model = this.getItemDisplay(item);
         var reset = function () {
+            if (!_this.maintainSearchText) {
+                _this.setInputValue('');
+            }
             _this.focus(true, false);
         };
         var validationFilter = function (tag) {
@@ -2459,6 +2463,10 @@ __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
     __metadata("design:type", Object)
 ], TagInputComponent.prototype, "animationDuration", void 0);
+__decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    __metadata("design:type", Object)
+], TagInputComponent.prototype, "maintainSearchText", void 0);
 __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Output"])(),
     __metadata("design:type", Object)
