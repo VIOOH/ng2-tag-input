@@ -1,10 +1,9 @@
-import { AnimationEntryMetadata } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 
-import { SECONDARY_PLACEHOLDER, PLACEHOLDER } from './core/constants';
+import { SECONDARY_PLACEHOLDER, PLACEHOLDER } from './core/constants/index';
 import { TagInputDropdown } from './components/dropdown/tag-input-dropdown.component';
-import { TagModel } from './core';
+import { TagModel } from './core/accessor';
 
 export interface TagInputOptions {
     separatorKeys: string[];
@@ -16,15 +15,15 @@ export interface TagInputOptions {
     asyncValidators: AsyncValidatorFn[];
     onlyFromAutocomplete: boolean;
     errorMessages: { [key: string]: string; };
-    theme: string;
+    theme: '';
     onTextChangeDebounce: number;
-    inputId: string;
+    inputId: string | null;
     inputClass: string;
     clearOnBlur: boolean;
     hideForm: boolean;
     addOnBlur: boolean;
     addOnPaste: boolean;
-    pasteSplitPattern: string;
+    pasteSplitPattern: string | RegExp;
     blinkIfDupe: boolean;
     removable: boolean;
     editable: boolean;
@@ -55,6 +54,8 @@ export interface TagInputDropdownOptions {
     minimumTextLength: number;
     limitItemsTo: number;
     keepOpen: boolean;
+    zIndex: number;
+    dynamicUpdate: boolean;
     matchingFn: (value: string, target: TagModel) => boolean;
 }
 
@@ -71,7 +72,7 @@ export const defaults = {
         errorMessages: {},
         theme: '',
         onTextChangeDebounce: 250,
-        inputId: '',
+        inputId: null,
         inputClass: '',
         clearOnBlur: false,
         hideForm: false,
@@ -93,8 +94,8 @@ export const defaults = {
         displayBy: 'display',
         identifyBy: 'value',
         animationDuration: {
-            enter: "250ms",
-            leave: "150ms"
+            enter: '250ms',
+            leave: '150ms'
         }
     },
     dropdown: <TagInputDropdownOptions>{
@@ -107,15 +108,17 @@ export const defaults = {
         minimumTextLength: 1,
         limitItemsTo: Infinity,
         keepOpen: true,
+        dynamicUpdate: true,
+        zIndex: 1000,
         matchingFn
     }
 };
 
 /**
  * @name matchingFn
- * @param this 
- * @param value 
- * @param target 
+ * @param this
+ * @param value
+ * @param target
  */
 function matchingFn(this: TagInputDropdown, value: string, target: TagModel): boolean {
     const targetValue = target[this.displayBy].toString();

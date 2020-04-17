@@ -1,11 +1,8 @@
 import {Component} from '@angular/core';
-
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/filter';
+import { HttpClient } from '@angular/common/http';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {filter, map} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
 
 @Component({
     selector: 'app',
@@ -15,7 +12,7 @@ import 'rxjs/add/operator/filter';
 export class Home {
     form: FormGroup;
 
-    constructor(private http: Http) {
+    constructor(private http: HttpClient) {
         this.form = new FormBuilder().group({
             chips: [['chip'], []]
         });
@@ -29,7 +26,7 @@ export class Home {
 
     itemsAsObjects = [{id: 0, name: 'Angular', readonly: true}, {id: 1, name: 'React'}];
 
-    autocompleteItems = ['Item1', 'item2', 'item3'];
+    autocompleteItems = ['Javascript', 'Typescript', 'Rust', 'Go'];
 
     autocompleteItemsAsObjects = [
         {value: 'Item1', id: 0, extra: 0},
@@ -42,18 +39,18 @@ export class Home {
     dragAndDropObjects = [{display: 'Javascript', value: 'Javascript'}, {display: 'Typescript', value: 'Typescript'}];
     dragAndDropStrings = ['CoffeScript', 'Scala.js'];
 
-    public requestAutocompleteItems = (text: string): Observable<Response> => {
+    public requestAutocompleteItems = (text: string): Observable<any> => {
         const url = `https://api.github.com/search/repositories?q=${text}`;
         return this.http
-            .get(url)
-            .map(data => data.json().items.map(item => item.full_name));
-    };
+            .get<any>(url)
+            .pipe(map(items => items.map(item => item.full_name)));
+    }
 
     public requestAutocompleteItemsFake = (text: string): Observable<string[]> => {
-        return Observable.of([
+        return of([
             'item1', 'item2', 'item3'
         ]);
-    };
+    }
 
     public options = {
         readonly: undefined,
@@ -94,7 +91,7 @@ export class Home {
 
     public transform(value: string): Observable<object> {
         const item = {display: `@${value}`, value: `@${value}`};
-        return Observable.of(item);
+        return of(item);
     }
 
     private startsWithAt(control: FormControl) {
@@ -123,10 +120,10 @@ export class Home {
             const result: any = isNaN(value) ? {
                 isNan: true
             } : null;
-  
+
             setTimeout(() => {
                 resolve(result);
-            }, 1);
+            }, 400);
         });
     }
 
@@ -145,22 +142,27 @@ export class Home {
 
     public onAdding(tag): Observable<any> {
         const confirm = window.confirm('Do you really want to add this tag?');
-        return Observable
-            .of(tag)
-            .filter(() => confirm);
+        return of(tag)
+            .pipe(filter(() => confirm));
     }
 
     public onRemoving(tag): Observable<any> {
         const confirm = window.confirm('Do you really want to remove this tag?');
-        return Observable
-            .of(tag)
-            .filter(() => confirm);
+        return of(tag)
+            .pipe(filter(() => confirm));
     }
 
     public asyncOnAdding(tag): Observable<any> {
         const confirm = window.confirm('Do you really want to add this tag?');
-        return Observable
-            .of(tag)
-            .filter(() => confirm);
+        return of(tag)
+            .pipe(filter(() => confirm));
+    }
+
+    public insertInputTag(): void {
+        if (this.inputText) {
+            this.items.push(this.inputText);
+
+            this.inputText = '';
+        }
     }
 }

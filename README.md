@@ -4,28 +4,35 @@ This is a component for Angular >= 4. Design and API are blandly inspired by Ang
 
 [![NPM](https://nodei.co/npm/ngx-chips.png?downloads=true&stars=true)](https://nodei.co/npm/ngx-chips/)
 
-## [Demo](http://www.buompris.co/ng2-tag-input/)
+## [Demo](https://angular-mfppay.stackblitz.io/)
 
-Check out [the live demo](http://www.buompris.co/ng2-tag-input/).
+Check out [the live demo](https://angular-mfppay.stackblitz.io/).
 
 
 ## Getting Started
 
-    npm install ngx-chips --save // OR
+    npm i ngx-chips // OR
     yarn add ngx-chips
 
 **Notice**: the latest version on NPM may not reflect the branch `master`. Open an issue and tag me if you need it to be published.
 
 ## Configuration
 
-Ensure you import the module:
+Ensure you import the module and the dependencies:
 
 ```javascript
 import { TagInputModule } from 'ngx-chips';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // this is needed!
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-   imports: [ TagInputModule, BrowserAnimationsModule, ...OtherModules ] // along with your other modules
+   imports: [
+       TagInputModule, 
+       BrowserAnimationsModule,
+       FormsModule,
+       ReactiveFormsModule
+       ...OtherModules 
+   ] // along with your other modules
 })
 export class AppModule {}
 ```
@@ -106,7 +113,7 @@ Custom class assigned to the input
 If set to true, it will clear the form's text on blur events
 
 
-**`hideForm`** - [**`?number`**]
+**`hideForm`** - [**`?boolean`**]
 
 If set to true, will remove the form from the component
 
@@ -126,7 +133,7 @@ If set to `true`, will add an item when the form is blurred (defaults to `false`
 If set to `true`, will add items pasted into the form's input  (defaults to `false`)
 
 
-**`pasteSplitPattern`** - [**`?string`**]
+**`pasteSplitPattern`** - [**`?string | RegExp`**]
 
 Pattern used with the native method split() to separate patterns in the string pasted (defaults to `,`)
 
@@ -316,7 +323,7 @@ TagInputDropdownComponent is a proxy between `ngx-chips` and `ng2-material-dropd
 **`autocompleteObservable`** - [**`(text: string) => Observable<Response>`**]
 
 A function that takes a string (current input value) and returns an Observable (ex. `http.get()`) with an array of items wit the same structure as `autocompleteItems` (see below). Make sure you retain the scope of your class or function when using this property.
-It can be used to popuplate the autocomplete with items coming from an async request.
+It can be used to populate the autocomplete with items coming from an async request.
 
 
 **`showDropdownIfEmpty`** - [**`?boolean`**]
@@ -374,7 +381,13 @@ of the input text, the second value corresponds to the value of each autocomplet
 
 If set to `false`, the dropdown will not be appended to the body, but will remain in its parent element. Useful when using the components inside popups or dropdowns. Defaults to `true`.
 
+**`dynamicUpdate`** - [**`?boolean`**]
 
+If set to `false`, the dropdown will not try to set the position according to its position in the page, but will be fixed. Defaults to `true`.
+
+**`zIndex`** - [**`?number`**]
+
+Manually set the zIndex of the dropdown. Defaults to `100`.
 
 ---
 
@@ -564,8 +577,8 @@ Set up some methods that will run when its relative event is fired.
 ```
 
 
-#### Readonly
-If readonly is passed to the tag-input, it won't be possible to select, add and remove items.
+~~#### Readonly
+If readonly is passed to the tag-input, it won't be possible to select, add and remove items.~~ [REMOVED]
 
 ```html
 <tag-input [ngModel]="['Javascript', 'Typescript']" [readonly]="true"></tag-input>
