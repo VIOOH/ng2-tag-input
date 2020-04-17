@@ -1,13 +1,17 @@
 import {
     Component,
+    Input
+} from '@angular/core';
+
+
+import {
     animate,
     trigger,
     style,
     transition,
     keyframes,
-    state,
-    Input
-} from '@angular/core';
+    state
+} from '@angular/animations';
 
 @Component({
     selector: 'tag-ripple',
@@ -19,7 +23,7 @@ import {
             overflow: hidden;
             position: absolute;
         }
-        
+
         .tag-ripple {
             background: rgba(0, 0, 0, 0.1);
             top: 50%;
@@ -46,5 +50,5 @@ import {
     ]
 })
 export class TagRipple {
-    @Input() public state: string = 'none';
+    @Input() public state = 'none';
 }
