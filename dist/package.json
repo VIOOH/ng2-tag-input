@@ -72,6 +72,9 @@
     "componentsDefaultDirectory": "components/{name}",
     "packageManager": "npm"
   },
+  "files": [
+    "dist/"
+  ],
   "main": "bundles/ngx-chips.umd.js",
   "module": "fesm5/ngx-chips.js",
   "es2015": "fesm2015/ngx-chips.js",
