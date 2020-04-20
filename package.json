@@ -92,7 +92,5 @@
     "componentsDefaultDirectory": "components/{name}",
     "packageManager": "npm"
   },
-  "files": [
-    "dist/"
-  ]
+  "main": "dist/"
 }
