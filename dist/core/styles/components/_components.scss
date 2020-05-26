@@ -1,8 +1,2 @@
 @import "_progress-bar.scss";
 @import "_tag.scss";
-// Yuvraj - Keep Selected item in DropDown list
-.disabled-menu-item{
-    pointer-events: none;
-    font-weight: 600;
-    cursor: not-allowed;
-}

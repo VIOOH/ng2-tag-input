@@ -22,7 +22,14 @@ import { TagInputComponent } from '../tag-input/tag-input';
 
 @Component({
   selector: 'tag-input-dropdown',
-  templateUrl: './tag-input-dropdown.template.html'
+  templateUrl: './tag-input-dropdown.template.html',
+  styles: [`
+    .disabled-menu-item {
+        pointer-events: none;
+        font-weight: 600;
+        cursor: not-allowed;
+    }
+  `]
 })
 export class TagInputDropdown implements AfterViewInit {
   /**

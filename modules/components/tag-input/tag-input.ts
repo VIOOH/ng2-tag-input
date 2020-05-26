@@ -916,9 +916,9 @@ export class TagInputComponent extends TagInputAccessor implements OnInit, After
         const display = this.getItemDisplay(item);
         const tag = this.createTag(item);
 
-        if (fromAutocomplete) {
-            this.setInputValue(this.getItemValue(item, true));
-        }
+        // if (fromAutocomplete) {
+        //     this.setInputValue(this.getItemValue(item, true));
+        // }
 
         return new Promise((resolve, reject) => {
             /**
